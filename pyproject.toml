@@ -6,22 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "snake_game_server"
 version = "0.1.0"
 requires-python = ">=3.12"
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8",
-    "pytest-cov",
-    "ruff",
-    "mypy",
+dependencies = [
+    "fastapi",
+    "uvicorn",
 ]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
-addopts = "-ra --strict-markers"
+[project.scripts]
+snake_game_server = "snake_game_server.__main__:run"
 
-[tool.ruff]
-line-length = 100
-
-[tool.mypy]
-strict = true
+[tool.setuptools.packages.find]
+where = ["src"]
