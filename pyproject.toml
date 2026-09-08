@@ -7,12 +7,10 @@ name = "snake_game_server"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "pytest",
     "fastapi",
     "uvicorn",
 ]
-
-[project.scripts]
-snake_game_server = "snake_game_server.__main__:run"
 
 [tool.setuptools.packages.find]
 where = ["src"]
