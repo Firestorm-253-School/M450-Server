@@ -7,8 +7,8 @@ from ..services.player_service import PlayerService
 router = APIRouter()
 
 connection_manager = ConnectionManager()
-player_service = PlayerService()
 game_service = GameService(connection_manager)
+player_service = PlayerService()
 
 
 @router.websocket("/ws/game")
@@ -25,10 +25,11 @@ async def game_socket(websocket: WebSocket):
         while True:
             message = await websocket.receive_json()
 
-            await game_service.handle_message(
+            response = await game_service.handle_message(
                 player=player,
                 message=message,
             )
+            await websocket.send_json(response)
 
     except WebSocketDisconnect:
         await connection_manager.disconnect(player.id)
