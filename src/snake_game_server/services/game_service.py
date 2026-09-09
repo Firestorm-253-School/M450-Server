@@ -65,27 +65,30 @@ class GameService:
     ) -> dict:
         message_type = message.get("type")
 
-        if message_type == "create_game":
-            game = await self.create_game(player)
-            return {"type": "game_created", "game_id": game.id}
+        match message_type:
+            case "create_game":
+                game = await self.create_game(player)
+                return {"type": "game_created", "game_id": game.id}
 
-        if message_type == "join_game":
-            game_id = message.get("game_id")
-            if not isinstance(game_id, str):
-                raise ValueError("join_game requires a game_id")
+        match message_type:
+            case "join_game":
+                game_id = message.get("game_id")
+                if not isinstance(game_id, str):
+                    raise ValueError("join_game requires a game_id")
 
-            game = await self.join_game(game_id, player)
-            return {
-                "type": "game_joined",
-                "game_id": game.id,
-                "player_count": len(game.players),
+                game = await self.join_game(game_id, player)
+                return {
+                    "type": "game_joined",
+                    "game_id": game.id,
+                    "player_count": len(game.players),
             }
 
-        if message_type == "leave_game":
-            game_id = self.player_games.get(player.id)
-            if game_id is not None:
-                await self.remove_player_from_game(game_id, player)
-            return {"type": "game_left", "game_id": game_id}
+        match message_type:
+            case "leave_game":
+                game_id = self.player_games.get(player.id)
+                if game_id is not None:
+                    await self.remove_player_from_game(game_id, player)
+                return {"type": "game_left", "game_id": game_id}
 
         raise ValueError(f"Unknown message type: {message_type!r}")
 
