@@ -8,6 +8,7 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "pytest",
+    "pytest-cov",
     "fastapi",
     "uvicorn",
     "websockets",
@@ -15,3 +16,14 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["snake_game_server"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
