@@ -1,4 +1,5 @@
 from uuid import uuid4
+from typing import Union
 
 from snake_game_server.models.game import Game
 from snake_game_server.models.player import Player
@@ -22,7 +23,7 @@ class GameService:
     async def join_game(self, game_id: str, player: Player) -> Game:
         game = self.games.get(game_id)
         if game is None:
-            raise ValueError(f"Game {game_id!r} does not exist")
+            return None
 
         self._leave_current_game(player)
         game.add_player(player)
@@ -62,7 +63,7 @@ class GameService:
         self,
         player: Player,
         message: dict,
-    ) -> dict:
+    ) -> Union[dict, None]:
         message_type = message.get("type")
 
         match message_type:
@@ -70,27 +71,36 @@ class GameService:
                 game = await self.create_game(player)
                 return {"type": "game_created", "game_id": game.id}
 
-        match message_type:
             case "join_game":
                 game_id = message.get("game_id")
                 if not isinstance(game_id, str):
                     raise ValueError("join_game requires a game_id")
 
                 game = await self.join_game(game_id, player)
+                
+                if game is None:
+                    return {
+                        "type": "game_join_failed",
+                        "game_id": None,
+                        "player_count": None,
+                    }
+                
                 return {
                     "type": "game_joined",
                     "game_id": game.id,
                     "player_count": len(game.players),
-            }
+                }
 
-        match message_type:
             case "leave_game":
                 game_id = self.player_games.get(player.id)
                 if game_id is not None:
                     await self.remove_player_from_game(game_id, player)
                 return {"type": "game_left", "game_id": game_id}
 
-        raise ValueError(f"Unknown message type: {message_type!r}")
+            case _:
+                return None
+       
+        
 
     def _leave_current_game(self, player: Player) -> None:
         game_id = self.player_games.pop(player.id, None)
