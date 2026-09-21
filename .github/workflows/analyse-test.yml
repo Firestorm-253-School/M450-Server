@@ -22,7 +22,7 @@ jobs:
           python-version: '3.12'
 
       - name: Abhängigkeiten installieren
-        run: pip install -e
+        run: pip install -e .
 
       - name: Tests mit Testabdeckung
         run: pytest -v --cov --cov-report=xml
