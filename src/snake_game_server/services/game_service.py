@@ -25,9 +25,10 @@ class GameService:
         if game is None:
             return None
 
-        self._leave_current_game(player)
-        game.add_player(player)
-        self.player_games[player.id] = game.id
+        if self.player_games.get(player.id) != game_id:
+            self._leave_current_game(player)
+            game.add_player(player)
+            self.player_games[player.id] = game.id
         return game
 
     async def add_player_to_game(
