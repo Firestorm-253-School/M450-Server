@@ -1,0 +1,54 @@
+============================================================================================= test session starts ==============================================================================================
+platform win32 -- Python 3.13.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samir\M450-Server\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\samir\M450-Server
+configfile: pyproject.toml
+plugins: anyio-4.15.1, cov-7.1.0
+collected 22 items                                                                                                                                                                                              
+
+tests/unit/test_highscore_service.py::test_normalisiere_akzeptiert_gueltige_modi[classic] PASSED                                                                                                          [  4%]
+tests/unit/test_highscore_service.py::test_normalisiere_akzeptiert_gueltige_modi[medium] PASSED                                                                                                           [  9%]
+tests/unit/test_highscore_service.py::test_normalisiere_akzeptiert_gueltige_modi[pro] PASSED                                                                                                              [ 13%]
+tests/unit/test_highscore_service.py::test_normalisiere_ignoriert_gross_kleinschreibung PASSED                                                                                                            [ 18%]
+tests/unit/test_highscore_service.py::test_normalisiere_lehnt_unbekannten_modus_ab PASSED                                                                                                                 [ 22%]
+tests/unit/test_highscore_service.py::test_normalisiere_lehnt_falshen_datentyp_ab PASSED                                                                                                                  [ 27%]
+tests/unit/test_highscore_service.py::test_speichere_gueltigen_eintrag PASSED                                                                                                                             [ 31%]
+tests/unit/test_highscore_service.py::test_speichere_lehnt_leeren_namen_ab PASSED                                                                                                                         [ 36%]
+tests/unit/test_highscore_service.py::test_speichere_lehnt_namen_mit_unerlaubten_zeichen_ab PASSED                                                                                                        [ 40%]
+tests/unit/test_highscore_service.py::test_speichere_lehnt_zu_langen_namen_ab PASSED                                                                                                                      [ 45%]
+tests/unit/test_highscore_service.py::test_speichere_lehnt_negative_punktezahl_ab PASSED                                                                                                                  [ 50%]
+tests/unit/test_highscore_service.py::test_speichere_lehnt_unbekannten_modus_ab PASSED                                                                                                                    [ 54%]
+tests/unit/test_highscore_service.py::test_uebersicht_ohne_eintraege_zeigt_allgemeinen_hinweis PASSED                                                                                                     [ 59%]
+tests/unit/test_highscore_service.py::test_uebersicht_ohne_eintraege_fuer_modus_zeigt_modus_hinweis PASSED                                                                                                [ 63%]
+tests/unit/test_highscore_service.py::test_uebersicht_mit_eintraegen_sortiert_absteigend_ohne_hinweis PASSED                                                                                              [ 68%]
+tests/unit/test_highscore_service.py::test_uebersicht_filtert_nach_modus PASSED                                                                                                                           [ 72%]
+tests/unit/test_highscore_service.py::test_uebersicht_begrenzt_auf_top_10 PASSED                                                                                                                          [ 77%]
+tests/unit/test_highscore_service.py::test_uebersicht_lehnt_unbekannten_modus_ab PASSED                                                                                                                   [ 81%]
+tests/integration/test_highscore_api.py::test_post_gueltigen_eintrag_erstellt_und_erscheint_im_passenden_modus PASSED                                                                                     [ 86%]
+tests/integration/test_highscore_api.py::test_post_ungueltigen_eintrag_lehnt_ab_und_speichert_nichts PASSED                                                                                               [ 90%]
+tests/integration/test_highscore_api.py::test_get_mit_modus_filtert_korrekt PASSED                                                                                                                        [ 95%]
+tests/integration/test_highscore_api.py::test_get_mit_unbekanntem_modus_gibt_422 PASSED                                                                                                                   [100%]
+
+=============================================================================================== warnings summary ===============================================================================================
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\samir\M450-Server\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================================================================================ tests coverage ================================================================================================
+_______________________________________________________________________________ coverage: platform win32, python 3.13.4-final-0 ________________________________________________________________________________
+
+Name                                                  Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------------------
+src\snake_game_server\api\highscores.py                  15      0      0      0   100%
+src\snake_game_server\services\highscore_service.py      44      2     24      2    94%   44, 50
+-------------------------------------------------------------------------------------------------
+TOTAL                                                    59      2     24      2    95%
+Required test coverage of 80.0% reached. Total coverage: 95.18%
+
+
+
+Auswertung:
+Alle 22 Test sind erfolgreich durchgelaufen und sind grün. Ausserdem liegt die Codeabdeckung bei 95% was zum min. 80% regelung passt. 
+Die Test zeigen das gültige Eingaben gespeichert werden und nicht gültige eingaben nicht gespeichert WebGL2RenderingContext.
+Der "highscore_service.py" wir zwar nur zu 94% abgedenkt jedoch wird "highscores.py" zu 100% abgedeckt.
