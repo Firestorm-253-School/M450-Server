@@ -33,7 +33,10 @@ class GameService:
             id=str(uuid4()),
             walls=game_map.walls,
             snake_body=[(start_x, start_y), (start_x - 1, start_y)],
+            width=game_map.width,
+            height=game_map.height,
         )
+        game.spawn_apple()
         game.add_player(player)
         self.games[game.id] = game
         self.player_games[player.id] = game.id
@@ -145,6 +148,7 @@ class GameService:
             "type": "game_state",
             "game_id": game.id,
             "snake": [list(position) for position in game.snake_body],
+            "apples": [list(position) for position in game.apples],
         }
 
     def _start_tick_loop(self, game: Game) -> None:
@@ -161,12 +165,22 @@ class GameService:
         try:
             while game.id in self.games:
                 await asyncio.sleep(TICK_INTERVAL_SECONDS)
+
+                old_tail = game.snake_body[-1]
                 game.move()
+                game.tick += 1
 
                 if game.head_hits_wall():
                     game.alive = False
                     await self._broadcast(game, {"type": "game_over", "game_id": game.id})
                     return
+
+                if game.head_is_on_apple():
+                    game.apples.remove(game.snake_body[0])
+                    game.snake_body.append(old_tail)
+
+                if game.tick % game.apple_spawn_interval_ticks == 0:
+                    game.spawn_apple()
 
                 await self._broadcast(game, self._game_state_message(game))
         except asyncio.CancelledError:

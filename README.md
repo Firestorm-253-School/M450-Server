@@ -60,11 +60,23 @@ Any other or missing `type` raises an error, which closes the connection with co
 
 ### Server → client responses
 
-| `type`         | Fields                                | Sent in response to |
-| -------------- | -------------------------------------- | -------------------- |
-| `game_created` | `game_id`                              | `create_game`        |
-| `game_joined`  | `game_id`, `player_count`              | `join_game`           |
-| `game_left`    | `game_id` (may be `null`)              | `leave_game`          |
+| `type`         | Fields                       | Sent in response to            |
+| -------------- | ---------------------------- | ------------------------------ |
+| `game_created` | `game_id`                    | `create_game`                  |
+| `game_joined`  | `game_id`, `player_count`    | `join_game`                    |
+| `game_left`    | `game_id` (may be `null`)    | `leave_game`                   |
+| `game_state`   | `game_id`, `snake`, `apples` | `set_direction` and game ticks |
+
+Example `game_state` message:
+
+```json
+{
+  "type": "game_state",
+  "game_id": "abc",
+  "snake": [[2, 2], [1, 2]],
+  "apples": [[10, 5]]
+}
+```
 
 Example exchange:
 
