@@ -10,21 +10,21 @@ async def game_service():
     return GameService(connection_manager)
 
 @pytest.fixture
-async def player():
+async def test_player():
     return Player(id="Test Player")
 
 @pytest.mark.parametrize("message", [
     {"type": "create_game"}
 ])
 @pytest.mark.anyio
-async def test_handle_message_create_game(message, game_service, player):
-    result = await game_service.handle_message(player, message)
+async def test_handle_message_create_game(message, game_service, test_player):
+    result = await game_service.handle_message(test_player, message)
 
     assert result is not None
     assert result["type"] == "game_created"
     assert result["game_id"] is not None
     game = game_service.games[result["game_id"]]
-    assert player.id in game.players
+    assert test_player.id in game.players
     assert game.started is False
     assert game.tick == 0
 
@@ -45,8 +45,8 @@ async def game_service_with_games():
     ({"type": "join_game", "game_id": "456"}, False)
 ])
 @pytest.mark.anyio
-async def test_handle_message_join_game(message, expected, game_service_with_games, player):
-    result = await game_service_with_games.handle_message(player, message)
+async def test_handle_message_join_game(message, expected, game_service_with_games, test_player):
+    result = await game_service_with_games.handle_message(test_player, message)
     assert result is not None
     
     assert (result["game_id"] is not None) == expected
@@ -54,7 +54,7 @@ async def test_handle_message_join_game(message, expected, game_service_with_gam
     if result["game_id"] is not None:
         assert result["type"] == "game_joined"
         game = game_service_with_games.games[result["game_id"]]
-        assert player.id in game.players
+        assert test_player.id in game.players
         assert game.started is False
         assert game.tick == 0
     else:
@@ -67,16 +67,16 @@ async def test_handle_message_join_game(message, expected, game_service_with_gam
     {"type": "leave_game", "game_id": "456"}
 ])
 @pytest.mark.anyio
-async def test_handle_message_leave_game(message, game_service, player):
-    result = await game_service.handle_message(player, message)
+async def test_handle_message_leave_game(message, game_service, test_player):
+    result = await game_service.handle_message(test_player, message)
 
     assert result is not None
     assert result["type"] == "game_left"
 
     if result["game_id"] is not None:
         game = game_service.games[result["game_id"]]
-        assert player.id not in game.players
+        assert test_player.id not in game.players
         assert game.started is False
         assert game.tick == 0
     else:
-        assert game_service.player_games.get(player.id) is None
+        assert game_service.player_games.get(test_player.id) is None
