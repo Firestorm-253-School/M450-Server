@@ -43,3 +43,19 @@ def test_head_hits_wall_false_when_inside():
 def test_head_hits_wall_detects_inner_obstacle():
     game = Game(id="g1", snake_body=[(10, 10), (9, 10)], walls=frozenset({(10, 10)}))
     assert game.head_hits_wall()
+
+
+def test_spawn_apple_adds_apple_on_free_position():
+    game = Game(id="g1")
+
+    game.spawn_apple()
+
+    assert len(game.apples) == 1
+    assert game.apples[0] not in game.snake_body
+    assert game.apples[0] not in game.walls
+
+
+def test_head_is_on_apple_returns_true_when_head_on_apple():
+    game = Game(id="g1", snake_body=[(5, 5), (4, 5)], apples=[(5, 5)])
+
+    assert game.head_is_on_apple()
