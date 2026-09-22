@@ -4,11 +4,12 @@ Klasse: gültig, Grenzwert, ungültig (Negativfall), Spezialfall
 
 ## Funktion 1: `normalisiere_modus(modus)`
 
-| ANF-ID | Parameter | Klasse                 | Bereich / Beschreibung                                   | Vertreter | Erwartetes Ergebnis |
-| ------ | --------- | ---------------------- | -------------------------------------------------------- | --------- | ------------------- |
-| ANF-02 | modus     | ungültig (Negativfall) | nicht "classic", "medium", "pro"                         | "ultra"   | ValueError          |
-| ANF-01 | modus     | gültig                 | "classic", "medium", "pro" (Gross-/Kleinschreibung egal) | "cLaSsic" | "classic"           |
-| ANF-02 | modus     | Spezialfall            | kein string                                              | None      | TypeError           |
+| ANF-ID | Parameter | Klasse                 | Bereich / Beschreibung                                  | Vertreter | Erwartetes Ergebnis |
+| ------ | --------- | ---------------------- | ------------------------------------------------------- | --------- | ------------------- |
+| ANF-02 | modus     | ungültig (Negativfall) | nicht "classic", "medium", "pro"                        | "ultra"   | ValueError          |
+| ANF-01 | modus     | gültig                 | "classic", "medium", "pro"                              | "classic" | "classic"           |
+| ANF-02 | modus     | ungültig (Negativfall) | kein string                                             | None      | TypeError           |
+| ANF-01 | modus     | Spezialfall            | "classic", "medium", "pro" Gross / Kleinschreibung egal | "MedIuM"  | "medium"            |
 
 ## Funktion 2: `speichere(name, score, modus)`
 
