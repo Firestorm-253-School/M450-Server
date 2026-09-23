@@ -164,9 +164,9 @@ class GameService:
 
                 game_over = False
                 for player in game.players.values():
-                    if player_service.step(player):
-                        game_over = True
-
+                    if(player.alive):
+                        player_service.step(player)
+                
                 if game.tick % game.apple_spawn_interval_ticks == 0:
                     game.spawn_apple()
 
@@ -181,10 +181,18 @@ class GameService:
             self.tick_tasks.pop(game.id, None)
 
     def _game_state_message(self, game: Game) -> dict:
+        players = {
+            player_id: {
+                "snake": [list(position) for position in player.snake_body],
+                "alive": player.alive,
+                "direction": list(player.direction),
+            }
+            for player_id, player in game.players.items()
+        }
         return {
             "type": "game_state",
             "game_id": game.id,
-            "snakes": {player_id: [list(position) for position in player.snake_body] for player_id, player in game.players.items()},
+            "snakes": players,
             "apples": [list(position) for position in game.apples],
         }
 
