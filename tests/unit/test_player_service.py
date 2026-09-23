@@ -91,6 +91,7 @@ def test_head_hits_wall_false_when_inside(player_service, player_with_game):
 def test_head_hits_wall_detects_inner_obstacle(player_service, player_with_game):
     player = player_with_game
     player.current_game.game_map = GameMap(
+        name="",
         width=24,
         height=18,
         walls=frozenset({(10, 10)}),

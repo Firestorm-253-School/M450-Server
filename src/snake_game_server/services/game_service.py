@@ -111,12 +111,14 @@ class GameService:
                         "type": "game_join_failed",
                         "game_id": None,
                         "player_count": None,
+                        "map": None
                     }
                 
                 return {
                     "type": "game_joined",
                     "game_id": game.id,
                     "player_count": len(game.players),
+                    "map": game.game_map.name
                 }
 
             case "leave_game":

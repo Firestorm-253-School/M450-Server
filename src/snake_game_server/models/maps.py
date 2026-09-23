@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class GameMap:
+    name: str
     width: int
     height: int
     walls: frozenset[tuple[int, int]]
@@ -34,6 +35,7 @@ def _corner_spawns(width: int, height: int, inset: int = 2) -> tuple[tuple[int, 
 
 
 CLASSIC = GameMap(
+    name="classic",
     width=24,
     height=18,
     walls=_border_walls(24, 18),
@@ -41,6 +43,7 @@ CLASSIC = GameMap(
 )
 
 MEDIUM = GameMap(
+    name="medium",
     width=24,
     height=18,
     walls=(
@@ -58,6 +61,7 @@ MEDIUM = GameMap(
 )
 
 PRO = GameMap(
+    name="pro",
     width=24,
     height=18,
     walls=(
