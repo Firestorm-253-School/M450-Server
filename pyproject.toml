@@ -12,6 +12,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "websockets",
+    "httpx2",
 ]
 
 [tool.setuptools.packages.find]

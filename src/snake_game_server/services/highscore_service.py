@@ -36,7 +36,8 @@ def uebersicht (modus: object | None = None) -> dict:
     if eintraege:
         hinweis = ""
     elif modus is None:
-        hinweis = HINWEIS_LEER
+        hinweis = ""
+        eintraege = lade_alle()
     else:
         hinweis = HINWEIS_LEER_MODUS.format(modus=normalisiere(modus))
 
@@ -61,20 +62,20 @@ def speichere(name: object, score: object, modus: object) -> dict:
 
 
 def lade(m):
-    p = ORDNER + "/" + m + ".json"
-    if not os.path.exists(p):
+    pathdata = ORDNER + "/" + m + ".json"
+    if not os.path.exists(pathdata):
         return []
-    f = open(p, encoding="utf-8")
-    d = json.load(f)
-    f.close()
-    return d
+    filedata = open(pathdata, encoding="utf-8")
+    dastaJson = json.load(filedata)
+    filedata.close()
+    return dastaJson
 
 
 def sichere(m):
     os.makedirs(ORDNER, exist_ok=True)
-    f = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
-    json.dump(highscores, f)
-    f.close()
+    pathdata = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
+    json.dump(highscores, pathdata)
+    pathdata.close()
 
 
 def lade_alle():
@@ -82,9 +83,12 @@ def lade_alle():
     for m in MODI:
         for x in lade(m):
             highscores.append(x)
+    return highscores
+            
 
 
 def speichere_dauerhaft(name, score, modus):
     eintrag = speichere(name, score, modus)
     sichere(eintrag["modus"])
     return eintrag
+
