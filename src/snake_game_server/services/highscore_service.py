@@ -31,6 +31,8 @@ def topten(modus: object | None = None) -> list[dict]:
     return sorted(eintraege, key=lambda eintrag: eintrag["score"], reverse=True)[:LEADERBOARD_SIZE]
 
 def uebersicht (modus: object | None = None) -> dict:
+    lade_alle(highscore_repository)
+
     eintraege = topten(modus)
 
     if eintraege:

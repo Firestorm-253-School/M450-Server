@@ -8,7 +8,7 @@ class HighscoreRepository:
     def _get_file_path_from_modus(self, modus: str):
         return f"{self.folder}/{modus}.json"
         
-    def lade(self, modus):
+    def lade(self, modus) -> list:
         file_path = self._get_file_path_from_modus(modus)
         if not os.path.exists(file_path):
             return []

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
 from ..services import highscore_service as service
-from snake_game_server.pruefung3.highscore_repository import HighscoreRepository
 
 router = APIRouter()
 
