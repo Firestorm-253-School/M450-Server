@@ -1,5 +1,4 @@
-import json
-import os
+from .highscore_repository import HighscoreRepository
 
 MODI = ("classic", "medium", "pro")
 NAME_MAX = 12
@@ -60,31 +59,18 @@ def speichere(name: object, score: object, modus: object) -> dict:
     return eintrag
 
 
-def lade(m):
-    p = ORDNER + "/" + m + ".json"
-    if not os.path.exists(p):
-        return []
-    f = open(p, encoding="utf-8")
-    d = json.load(f)
-    f.close()
-    return d
 
+def sichere(highscore_repository: HighscoreRepository, mode: str):
+    highscore_repository.save(mode, highscores)
 
-def sichere(m):
-    os.makedirs(ORDNER, exist_ok=True)
-    f = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
-    json.dump(highscores, f)
-    f.close()
-
-
-def lade_alle():
+def lade_alle(highscore_repository: HighscoreRepository):
     highscores.clear()
     for m in MODI:
-        for x in lade(m):
+        for x in highscore_repository.load(m):
             highscores.append(x)
 
 
-def speichere_dauerhaft(name, score, modus):
+def speichere_dauerhaft(highscore_repository: HighscoreRepository, name, score, modus):
     eintrag = speichere(name, score, modus)
-    sichere(eintrag["modus"])
+    sichere(highscore_repository, eintrag["modus"])
     return eintrag
