@@ -24,12 +24,6 @@ class PlayerService:
         dx, dy = player.direction
         new_head = (head_x + dx, head_y + dy)
         player.snake_body = [new_head] + player.snake_body[:-1]
-
-    def head_hits_wall(self, player_id: str) -> bool:
-        player = self.players.get(player_id)
-        if not player:
-            return False
-        return player.snake_body[0] in player.current_game.game_map.walls
         
     def get_or_create(self, player_id: str) -> Player:
         player = self.players.get(player_id)
@@ -60,6 +54,10 @@ class PlayerService:
         if self.head_hits_wall(player.id):
             player.alive = False
             return True
+        
+        if self.head_hits_snake(player.id):
+            player.alive = False
+            return True
 
         if self.head_is_on_apple(player):
             player.current_game.apples.remove(player.snake_body[0])
@@ -67,5 +65,23 @@ class PlayerService:
 
         return False
 
+
+    def head_hits_wall(self, player_id: str) -> bool:
+        player = self.players.get(player_id)
+        if not player:
+            return False
+        return player.snake_body[0] in player.current_game.game_map.walls
+
+    def head_hits_snake(self, player_id: str) -> bool:
+        player = self.players.get(player_id)
+        if not player:
+            return False
+        
+        return player.snake_body[0] in [
+            body_part
+            for any_player in player.current_game.players.values()
+            for body_part in (any_player.snake_body if any_player.id == player.id else any_player.snake_body[1:])
+        ]
+    
     def head_is_on_apple(self, player: Player) -> bool:
         return player.snake_body[0] in player.current_game.apples
