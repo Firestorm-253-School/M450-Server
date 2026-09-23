@@ -174,7 +174,7 @@ class GameService:
                     if (player.alive):
                         player_service.step(player)
                     else:
-                        service.speichere(player.id, len(player.snake_body), player.current_game.game_map)
+                        service.speichere(player.id, len(player.snake_body), player.current_game.game_map.name)
                 
                 if game_over:
                     await self._broadcast(game, {"type": "game_over", "game_id": game.id})
