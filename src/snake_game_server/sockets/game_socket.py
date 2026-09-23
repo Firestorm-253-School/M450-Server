@@ -28,13 +28,16 @@ async def game_socket(websocket: WebSocket):
             response = await game_service.handle_message(
                 player=player,
                 message=message,
+                player_service=player_service,
             )
             await websocket.send_json(response)
 
     except WebSocketDisconnect:
         await connection_manager.disconnect(player.id)
 
-    except Exception:
+    except Exception as e:
+        print(e)
+
         await connection_manager.disconnect(player.id)
 
         await websocket.close(

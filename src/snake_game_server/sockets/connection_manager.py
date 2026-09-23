@@ -1,4 +1,4 @@
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
 
 from snake_game_server.services.player_service import PlayerService
 
@@ -17,7 +17,7 @@ class ConnectionManager:
         if player_id is None:
             return None
 
-        player = await player_service.get_or_create(player_id)
+        player = player_service.get_or_create(player_id)
 
         await websocket.accept()
         self.connections[player.id] = websocket
@@ -37,9 +37,15 @@ class ConnectionManager:
         websocket = self.connections.get(player_id)
 
         if websocket is not None:
-            await websocket.send_json(message)
+            try:
+                await websocket.send_json(message)
+            except WebSocketDisconnect:
+                await self.disconnect(player_id)
 
 
     async def broadcast(self, message: dict):
-        for websocket in self.connections.values():
-            await websocket.send_json(message)
+        for player_id, websocket in list(self.connections.items()):
+            try:
+                await websocket.send_json(message)
+            except WebSocketDisconnect:
+                await self.disconnect(player_id)
