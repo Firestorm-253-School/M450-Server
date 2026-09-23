@@ -80,7 +80,7 @@ class PlayerService:
         return player.snake_body[0] in [
             body_part
             for any_player in player.current_game.players.values()
-            for body_part in any_player.snake_body
+            for body_part in any_player.snake_body[1:]
         ]
     
     def head_is_on_apple(self, player: Player) -> bool:
