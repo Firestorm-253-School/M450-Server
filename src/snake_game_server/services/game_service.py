@@ -99,7 +99,7 @@ class GameService:
                 map_name = message.get("map", DEFAULT_MAP_NAME)
                 game = await self.create_game(player, map_name)
 
-                self._game_state_message(game)
+                #self._game_state_message(game)
                 return {"type": "game_created", "game_id": game.id}
 
             case "join_game":
@@ -117,7 +117,7 @@ class GameService:
                         "map": None
                     }
 
-                self._game_state_message(game)
+                #self._game_state_message(game)
                 return {
                     "type": "game_joined",
                     "game_id": game.id,
@@ -166,16 +166,17 @@ class GameService:
                 await asyncio.sleep(TICK_INTERVAL_SECONDS)
                 game.tick += 1
 
-                game_over = False
-                for player in game.players.values():
-                    if(player.alive):
-                        player_service.step(player)
-                
                 if game.tick % game.apple_spawn_interval_ticks == 0:
                     game.spawn_apple()
-
+                
+                game_over = False
+                for player in game.players.values():
+                    if (player.alive):
+                        player_service.step(player)
+                    else:
+                        service.speichere(player.id, len(player.snake_body), player.current_game.game_map)
+                
                 if game_over:
-                    service.speichere(player.id, len(player.snake_body), player.current_game.game_map)
                     await self._broadcast(game, {"type": "game_over", "game_id": game.id})
                     return
 
