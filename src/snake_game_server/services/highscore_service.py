@@ -1,12 +1,13 @@
 import json
 import os
+from pathlib import Path
 
 MODI = ("classic", "medium", "pro")
 NAME_MAX = 12
 LEADERBOARD_SIZE = 10
 HINWEIS_LEER = "Noch keine Spiele gespielt"
 HINWEIS_LEER_MODUS = "Noch keine Spiele im Modus {modus}"
-ORDNER = "daten"
+ORDNER = Path("daten")
 
 highscores: list[dict] = []
 
@@ -60,27 +61,45 @@ def speichere(name: object, score: object, modus: object) -> dict:
     return eintrag
 
 
-def lade(m):
-    p = ORDNER + "/" + m + ".json"
-    if not os.path.exists(p):
+class HighscoreDatei:
+    def __init__(self, ordner: Path = ORDNER):
+        self.ordner = Path(ordner)
+
+    def lade(self, modus: str) -> list[dict]:
+        pfad1 = self.ordner / (modus + ".json")
+
+        if not pfad1.exists():
+            return []
+
+        text = pfad1.read_text(encoding="utf-8")
+        eintreage = json.loads(text)
+
+        print("pfad")
+        return eintreage
+
+    
+def lade(modus ):
+    pfad = ORDNER + "/" + modus + ".json"
+    if not os.path.exists(pfad):
         return []
-    f = open(p, encoding="utf-8")
-    d = json.load(f)
-    f.close()
-    return d
+    formatierung = open(pfad, encoding="utf-8")
+    eintreage = json.load(formatierung)
+    formatierung.close()
+    print("pfad")
+    return eintreage
 
 
-def sichere(m):
+def sichere(modus: str, datei:HighscoreDatei):
     os.makedirs(ORDNER, exist_ok=True)
-    f = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
-    json.dump(highscores, f)
-    f.close()
+    formatierung = open(ORDNER + "/" + modus + ".json", "w", encoding="utf-8")
+    json.dump(highscores, formatierung)
+    formatierung.close()
 
 
 def lade_alle():
     highscores.clear()
-    for m in MODI:
-        for x in lade(m):
+    for modus in MODI:
+        for x in lade(modus):
             highscores.append(x)
 
 
