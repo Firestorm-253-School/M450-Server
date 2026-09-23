@@ -19,3 +19,5 @@ class Player:
     alive: bool = True
 
     direction_to_set: list[tuple[int, int]] = field(default=direction)
+
+    color: str = "#ff0000"

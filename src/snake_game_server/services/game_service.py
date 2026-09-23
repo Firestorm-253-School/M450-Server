@@ -188,6 +188,7 @@ class GameService:
                 "snake": [list(position) for position in player.snake_body],
                 "alive": player.alive,
                 "direction": list(player.direction),
+                "color": player.color
             }
             for player_id, player in game.players.items()
         }
