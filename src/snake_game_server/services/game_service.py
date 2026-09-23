@@ -6,6 +6,7 @@ from snake_game_server.models.game import Game
 from snake_game_server.models.maps import DEFAULT_MAP_NAME, MAPS_BY_NAME
 from snake_game_server.models.player import Player
 from snake_game_server.services.player_service import PlayerService
+from ..services import highscore_service as service
 
 DIRECTION_VECTORS = {
     "up": (0, -1),
@@ -171,6 +172,7 @@ class GameService:
                     game.spawn_apple()
 
                 if game_over:
+                    service.speichere(player.id, player.snake_body.count(), player.current_game.game_map)
                     await self._broadcast(game, {"type": "game_over", "game_id": game.id})
                     return
 
