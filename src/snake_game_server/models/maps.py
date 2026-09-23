@@ -8,6 +8,7 @@ class GameMap:
     height: int
     walls: frozenset[tuple[int, int]]
     start_positions: tuple[tuple[int, int], ...]
+    start_directions: tuple[tuple[int, int], ...]
 
 
 def _border_walls(width: int, height: int) -> frozenset[tuple[int, int]]:
@@ -34,12 +35,24 @@ def _corner_spawns(width: int, height: int, inset: int = 2) -> tuple[tuple[int, 
     )
 
 
+def _corner_spawn_directions() -> tuple[tuple[int, int], ...]:
+    # Matches the corner order of _corner_spawns: each snake starts facing
+    # horizontally away from its nearest side wall, toward the open center.
+    return (
+        (1, 0),   # top-left -> right
+        (-1, 0),  # top-right -> left
+        (1, 0),   # bottom-left -> right
+        (-1, 0),  # bottom-right -> left
+    )
+
+
 CLASSIC = GameMap(
     name="classic",
     width=24,
     height=18,
     walls=_border_walls(24, 18),
     start_positions=_corner_spawns(24, 18),
+    start_directions=_corner_spawn_directions(),
 )
 
 MEDIUM = GameMap(
@@ -58,6 +71,7 @@ MEDIUM = GameMap(
         | _rect(18, 11, 1, 4)
     ),
     start_positions=_corner_spawns(24, 18),
+    start_directions=_corner_spawn_directions(),
 )
 
 PRO = GameMap(
@@ -80,6 +94,7 @@ PRO = GameMap(
         | _rect(16, 9, 1, 3)
     ),
     start_positions=_corner_spawns(24, 18, inset=4),
+    start_directions=_corner_spawn_directions(),
 )
 
 MAPS_BY_NAME: dict[str, GameMap] = {
