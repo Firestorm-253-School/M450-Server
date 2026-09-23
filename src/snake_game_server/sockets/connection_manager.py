@@ -17,7 +17,7 @@ class ConnectionManager:
         if player_id is None:
             return None
 
-        player = await player_service.get_or_create(player_id)
+        player = player_service.get_or_create(player_id)
 
         await websocket.accept()
         self.connections[player.id] = websocket

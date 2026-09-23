@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass, field
 
-from .maps import CLASSIC
+from .maps import CLASSIC, GameMap
 from .player import Player
 
 
@@ -11,48 +11,30 @@ class Game:
     players: dict[str, Player] = field(default_factory=dict)
     started: bool = False
     tick: int = 0
-    snake_body: list[tuple[int, int]] = field(
-        default_factory=lambda: [(2, 2), (1, 2)]
-    )
-    direction: tuple[int, int] = (1, 0)
-    walls: frozenset[tuple[int, int]] = field(default_factory=lambda: CLASSIC.walls)
-    alive: bool = True
     apples: list[tuple[int, int]] = field(default_factory=list)
     apple_spawn_interval_ticks: int = 20
     max_apples: int = 3
     width: int = 24
     height: int = 18
+    game_map: GameMap = field(default_factory=lambda: CLASSIC)
 
     def add_player(self, player: Player) -> None:
         self.players[player.id] = player
+        player.current_game = self
 
-    def remove_player(self, player: Player) -> None:
-        self.players.pop(player.id, None)
+    def remove_player(self, player_id: str) -> None:
+        self.players.pop(player_id, None)
 
     def has_player(self, player_id: str) -> bool:
-        return player_id in self.players
-
-    def set_direction(self, direction: tuple[int, int]) -> None:
-        opposite = (-self.direction[0], -self.direction[1])
-        if direction != opposite:
-            self.direction = direction
-
-    def move(self) -> None:
-        head_x, head_y = self.snake_body[0]
-        dx, dy = self.direction
-        new_head = (head_x + dx, head_y + dy)
-        self.snake_body = [new_head] + self.snake_body[:-1]
-
-    def head_hits_wall(self) -> bool:
-        return self.snake_body[0] in self.walls
-
-    def head_is_on_apple(self) -> bool:
-        return self.snake_body[0] in self.apples
+        return (player_id in self.players)
 
     def spawn_apple(self) -> None:
         if len(self.apples) >= self.max_apples:
             return
-        occupied_positions = set(self.snake_body) | set(self.walls) | set(self.apples)
+
+        occupied_positions = set(self.game_map.walls) | set(self.apples)
+        for player in self.players.values():
+            occupied_positions.update(player.snake_body)
 
         free_positions = [
             (x, y)

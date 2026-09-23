@@ -28,6 +28,7 @@ async def game_socket(websocket: WebSocket):
             response = await game_service.handle_message(
                 player=player,
                 message=message,
+                player_service=player_service,
             )
             await websocket.send_json(response)
 
