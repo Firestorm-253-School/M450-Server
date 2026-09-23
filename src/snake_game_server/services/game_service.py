@@ -172,7 +172,7 @@ class GameService:
                     game.spawn_apple()
 
                 if game_over:
-                    service.speichere(player.id, player.snake_body.count(), player.current_game.game_map)
+                    service.speichere(player.id, len(player.snake_body), player.current_game.game_map)
                     await self._broadcast(game, {"type": "game_over", "game_id": game.id})
                     return
 
