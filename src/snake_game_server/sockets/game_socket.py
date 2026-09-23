@@ -35,7 +35,9 @@ async def game_socket(websocket: WebSocket):
     except WebSocketDisconnect:
         await connection_manager.disconnect(player.id)
 
-    except Exception:
+    except Exception as e:
+        print(e)
+
         await connection_manager.disconnect(player.id)
 
         await websocket.close(

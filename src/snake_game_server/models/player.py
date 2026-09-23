@@ -17,3 +17,5 @@ class Player:
     )
     direction: tuple[int, int] = (1, 0)
     alive: bool = True
+
+    direction_to_set: list[tuple[int, int]] = field(default=direction)

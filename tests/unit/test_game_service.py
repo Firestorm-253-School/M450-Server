@@ -260,7 +260,7 @@ async def test_game_state_contains_apples():
     )
     game = service._require_current_game(player)
 
-    response = service._game_state_message(game, player)
+    response = service._game_state_message(game)
 
     assert "apples" in response
     assert len(response["apples"]) == 1
