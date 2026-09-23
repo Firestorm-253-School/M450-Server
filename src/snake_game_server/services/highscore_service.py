@@ -1,14 +1,14 @@
-import json
-import os
+from snake_game_server.pruefung3.highscore_repository import HighscoreRepository
 
 MODI = ("classic", "medium", "pro")
 NAME_MAX = 12
 LEADERBOARD_SIZE = 10
 HINWEIS_LEER = "Noch keine Spiele gespielt"
 HINWEIS_LEER_MODUS = "Noch keine Spiele im Modus {modus}"
-ORDNER = "daten"
 
 highscores: list[dict] = []
+highscore_repository = HighscoreRepository("daten")
+
 
 def normalisiere(modus: object) -> str:
     if not isinstance(modus, str):
@@ -60,31 +60,14 @@ def speichere(name: object, score: object, modus: object) -> dict:
     return eintrag
 
 
-def lade(m):
-    p = ORDNER + "/" + m + ".json"
-    if not os.path.exists(p):
-        return []
-    f = open(p, encoding="utf-8")
-    d = json.load(f)
-    f.close()
-    return d
-
-
-def sichere(m):
-    os.makedirs(ORDNER, exist_ok=True)
-    f = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
-    json.dump(highscores, f)
-    f.close()
-
-
-def lade_alle():
+def lade_alle(highscore_repository: HighscoreRepository):
     highscores.clear()
     for m in MODI:
-        for x in lade(m):
+        for x in highscore_repository.lade(m):
             highscores.append(x)
 
 
-def speichere_dauerhaft(name, score, modus):
+def speichere_dauerhaft(name, score, modus, highscore_repository: HighscoreRepository):
     eintrag = speichere(name, score, modus)
-    sichere(eintrag["modus"])
+    highscore_repository.sichere(eintrag["modus"], highscores)
     return eintrag
