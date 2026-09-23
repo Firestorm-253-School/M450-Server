@@ -6,6 +6,20 @@
 4. **Aufrufe prüfen**: Was bewirken `assert_called_once_with(...)` und `assert_not_called()`?
 5. **`spec`**: Was bewirkt `Mock(spec=MeineKlasse)`, und warum ist das nützlich?
 
+# Problem beheben: Debugging-Protokoll (Mangel M-01)
+
+**Fehlermeldung:**
+
+```text
+
+```
+
+**Fundstelle (Datei, Zeile):**
+
+**Ursache:**
+
+**Gewählte Korrekturmassnahme und Begründung:**
+
 
 # Code Review
 
