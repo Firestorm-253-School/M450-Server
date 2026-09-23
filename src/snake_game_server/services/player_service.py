@@ -1,5 +1,3 @@
-from random import random
-
 from snake_game_server.models.player import Player
 from snake_game_server.models.game import Game
 
@@ -54,47 +52,18 @@ class PlayerService:
         if player.current_game is None or not player.alive:
             return False
 
-        old_tail = player.current_game.snake_body[-1]
-        player.current_game.move()
-        player.current_game.tick += 1
-
+        old_tail = player.snake_body[-1]
         self.move(player.id)
 
         if self.head_hits_wall(player.id):
             player.alive = False
             return True
 
-        
-        if self.head_is_on_apple():
+        if self.head_is_on_apple(player):
             player.current_game.apples.remove(player.snake_body[0])
             player.snake_body.append(old_tail)
 
-
         return False
-    
-    def state_message(self, player: Player) -> dict:
-        return {
-            "type": "player_state",
-            "game_id": player.current_game.id,
-            "player_id": player.id,
-            "snake": [list(position) for position in player.snake_body],
-            "apples": [list(position) for position in player.apples],
-        }
 
-    def head_is_on_apple(self) -> bool:
-        return self.snake_body[0] in self.apples
-
-    def spawn_apple(self, player: Player) -> None:
-        if len(player.apples) >= player.max_apples:
-            return
-        occupied_positions = set(player.snake_body) | set(player.current_game.game_map.walls) | set(player.apples)
-
-        free_positions = [
-            (x, y)
-            for x in range(player.current_game.width)
-            for y in range(player.current_game.height)
-            if (x, y) not in occupied_positions
-        ]
-
-        if free_positions:
-            self.apples.append(random.choice(free_positions))
+    def head_is_on_apple(self, player: Player) -> bool:
+        return player.snake_body[0] in player.current_game.apples

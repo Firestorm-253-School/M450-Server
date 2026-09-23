@@ -27,3 +27,21 @@ class Game:
 
     def has_player(self, player_id: str) -> bool:
         return (player_id in self.players)
+
+    def spawn_apple(self) -> None:
+        if len(self.apples) >= self.max_apples:
+            return
+
+        occupied_positions = set(self.game_map.walls) | set(self.apples)
+        for player in self.players.values():
+            occupied_positions.update(player.snake_body)
+
+        free_positions = [
+            (x, y)
+            for x in range(self.width)
+            for y in range(self.height)
+            if (x, y) not in occupied_positions
+        ]
+
+        if free_positions:
+            self.apples.append(random.choice(free_positions))

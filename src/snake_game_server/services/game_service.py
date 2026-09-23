@@ -143,7 +143,7 @@ class GameService:
                     game.started = True
                     self._start_tick_loop(game, player_service)
 
-                return player_service.state_message(player)
+                return self._game_state_message(game, player)
 
             case _:
                 return None
@@ -162,41 +162,48 @@ class GameService:
         try:
             while game.id in self.games:
                 await asyncio.sleep(TICK_INTERVAL_SECONDS)
+                game.tick += 1
 
                 game_over = False
                 for player in list(game.players.values()):
-                    game_over = await player_service.step(player)
+                    if await player_service.step(player):
+                        game_over = True
 
                 if game.tick % game.apple_spawn_interval_ticks == 0:
                     game.spawn_apple()
 
-                    if game_over:
-                        await self._broadcast(game, {"type": "game_over", "game_id": game.id})
-                        return
+                if game_over:
+                    await self._broadcast(game, {"type": "game_over", "game_id": game.id})
+                    return
 
-                if not game_over:
-                    await self._broadcast(game, self._game_state_message(game))
+                await self._broadcast_game_state(game)
         except asyncio.CancelledError:
             pass
         finally:
             self.tick_tasks.pop(game.id, None)
 
-    def _game_state_message(self, game: Game) -> dict:
+    def _game_state_message(self, game: Game, player: Player) -> dict:
         return {
             "type": "game_state",
             "game_id": game.id,
-            "players": {
-                player_id: {
-                    "snake": [list(position) for position in player.snake_body],
-                    "alive": player.alive,
-                }
-                for player_id, player in game.players.items()
-            },
+            "snake": [list(position) for position in player.snake_body],
+            "apples": [list(position) for position in game.apples],
         }
+
+    async def _broadcast_game_state(self, game: Game) -> None:
+        for player in list(game.players.values()):
+            await self.connection_manager.send_to_player(
+                player.id, self._game_state_message(game, player)
+            )
 
     async def _broadcast(self, game: Game, message: dict) -> None:
         for player_id in list(game.players):
             await self.connection_manager.send_to_player(player_id, message)
+
+    def _require_current_game(self, player: Player) -> Game:
+        if player.current_game is None:
+            raise ValueError("Player is not currently in a game")
+        return player.current_game
 
     def _leave_current_game(self, player: Player) -> None:
         game_id = self.player_games.pop(player.id, None)

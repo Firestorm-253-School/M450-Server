@@ -250,12 +250,17 @@ async def test_handle_message_join_game_without_game_id_raises(game_service, pla
 @pytest.mark.anyio
 async def test_game_state_contains_apples():
     service = GameService(connection_manager=FakeConnectionManager())
-    player = Player(id="p1")
+    player_service = PlayerService()
+    player = player_service.get_or_create("p1")
 
-    await service.handle_message(player=player, message={"type": "create_game"})
+    await service.handle_message(
+        player=player,
+        message={"type": "create_game"},
+        player_service=player_service,
+    )
     game = service._require_current_game(player)
 
-    response = service._game_state_message(game)
+    response = service._game_state_message(game, player)
 
     assert "apples" in response
     assert len(response["apples"]) == 1
@@ -264,35 +269,46 @@ async def test_game_state_contains_apples():
 @pytest.mark.anyio
 async def test_snake_eats_apple_removes_apple_and_grows():
     service = GameService(connection_manager=FakeConnectionManager())
-    player = Player(id="p1")
+    player_service = PlayerService()
+    player = player_service.get_or_create("p1")
 
-    await service.handle_message(player=player, message={"type": "create_game"})
+    await service.handle_message(
+        player=player,
+        message={"type": "create_game"},
+        player_service=player_service,
+    )
     game = service._require_current_game(player)
 
-    game.snake_body = [(5, 5), (4, 5)]
-    game.direction = (1, 0)
+    player.snake_body = [(5, 5), (4, 5)]
+    player.direction = (1, 0)
     game.apples = [(6, 5)]
 
     await service.handle_message(
         player=player,
         message={"type": "set_direction", "direction": "right"},
+        player_service=player_service,
     )
 
     await asyncio.sleep(0.2)
 
     service._stop_tick_loop(game.id)
 
-    assert game.snake_body[0] == (6, 5)
-    assert len(game.snake_body) == 3
+    assert player.snake_body[0] == (6, 5)
+    assert len(player.snake_body) == 3
     assert game.apples == []
 
 
 @pytest.mark.anyio
 async def test_apple_spawns_after_spawn_interval():
     service = GameService(connection_manager=FakeConnectionManager())
-    player = Player(id="p1")
+    player_service = PlayerService()
+    player = player_service.get_or_create("p1")
 
-    await service.handle_message(player=player, message={"type": "create_game"})
+    await service.handle_message(
+        player=player,
+        message={"type": "create_game"},
+        player_service=player_service,
+    )
     game = service._require_current_game(player)
 
     game.apples = []
@@ -301,6 +317,7 @@ async def test_apple_spawns_after_spawn_interval():
     await service.handle_message(
         player=player,
         message={"type": "set_direction", "direction": "down"},
+        player_service=player_service,
     )
 
     await asyncio.sleep(0.2)
