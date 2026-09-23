@@ -28,7 +28,6 @@ class GameService:
         self._leave_current_game(player)
 
         game_map = MAPS_BY_NAME.get(map_name, MAPS_BY_NAME[DEFAULT_MAP_NAME])
-        start_x, start_y = game_map.start_positions[0]
 
         game_id = str(uuid4())
 
@@ -41,9 +40,6 @@ class GameService:
         )
         game.spawn_apple()
         game.add_player(player)
-        player.snake_body = [(start_x, start_y), (start_x - 1, start_y)]
-        player.direction = (1, 0)
-        player.alive = True
         self.games[game.id] = game
         self.player_games[player.id] = game.id
         return game
@@ -115,12 +111,14 @@ class GameService:
                         "type": "game_join_failed",
                         "game_id": None,
                         "player_count": None,
+                        "map": None
                     }
                 
                 return {
                     "type": "game_joined",
                     "game_id": game.id,
                     "player_count": len(game.players),
+                    "map": game.game_map.name
                 }
 
             case "leave_game":
@@ -137,13 +135,13 @@ class GameService:
                 if direction is None:
                     raise ValueError(f"Unknown direction: {direction_name!r}")
 
-                player_service.set_direction(player.id, direction)
+                player.direction_to_set = direction
 
                 if not game.started:
                     game.started = True
                     self._start_tick_loop(game, player_service)
 
-                return self._game_state_message(game, player)
+                return self._game_state_message(game)
 
             case _:
                 return None
@@ -165,10 +163,10 @@ class GameService:
                 game.tick += 1
 
                 game_over = False
-                for player in list(game.players.values()):
-                    if await player_service.step(player):
-                        game_over = True
-
+                for player in game.players.values():
+                    if(player.alive):
+                        player_service.step(player)
+                
                 if game.tick % game.apple_spawn_interval_ticks == 0:
                     game.spawn_apple()
 
@@ -182,18 +180,26 @@ class GameService:
         finally:
             self.tick_tasks.pop(game.id, None)
 
-    def _game_state_message(self, game: Game, player: Player) -> dict:
+    def _game_state_message(self, game: Game) -> dict:
+        players = {
+            player_id: {
+                "snake": [list(position) for position in player.snake_body],
+                "alive": player.alive,
+                "direction": list(player.direction),
+            }
+            for player_id, player in game.players.items()
+        }
         return {
             "type": "game_state",
             "game_id": game.id,
-            "snake": [list(position) for position in player.snake_body],
+            "snakes": players,
             "apples": [list(position) for position in game.apples],
         }
 
     async def _broadcast_game_state(self, game: Game) -> None:
-        for player in list(game.players.values()):
+        for player in game.players.values():
             await self.connection_manager.send_to_player(
-                player.id, self._game_state_message(game, player)
+                player.id, self._game_state_message(game)
             )
 
     async def _broadcast(self, game: Game, message: dict) -> None:

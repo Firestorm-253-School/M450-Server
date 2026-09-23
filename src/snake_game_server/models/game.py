@@ -21,6 +21,14 @@ class Game:
     def add_player(self, player: Player) -> None:
         self.players[player.id] = player
         player.current_game = self
+        
+        slot = len(self.players) - 1
+        start_x, start_y = self.game_map.start_positions[slot]
+        dx, dy = self.game_map.start_directions[slot]
+
+        player.snake_body = [(start_x, start_y), (start_x - dx, start_y - dy)]
+        player.direction = (dx, dy)
+        player.alive = True
 
     def remove_player(self, player_id: str) -> None:
         self.players.pop(player_id, None)
