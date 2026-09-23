@@ -5,6 +5,15 @@ from .maps import CLASSIC, GameMap
 from .player import Player
 
 
+PLAYER_COLORS = [
+    "#FF3B30",  # Rot
+    "#007AFF",  # Blau
+    "#34C759",  # Grün
+    "#FFCC00",  # Gelb
+    "#AF52DE",  # Lila
+    "#FF9500",  # Orange
+]
+
 @dataclass
 class Game:
     id: str
@@ -29,6 +38,7 @@ class Game:
         player.snake_body = [(start_x, start_y), (start_x - dx, start_y - dy)]
         player.direction = (dx, dy)
         player.alive = True
+        player.color = PLAYER_COLORS[slot]
 
     def remove_player(self, player_id: str) -> None:
         self.players.pop(player_id, None)
