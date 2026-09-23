@@ -51,6 +51,8 @@ class PlayerService:
     def step(self, player: Player) -> bool:
         if player.current_game is None or not player.alive:
             return False
+        
+        self.set_direction(player.id, player.direction_to_set)
 
         old_tail = player.snake_body[-1]
         self.move(player.id)
