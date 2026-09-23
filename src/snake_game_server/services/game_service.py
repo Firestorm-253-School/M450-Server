@@ -182,7 +182,7 @@ class GameService:
         return {
             "type": "game_state",
             "game_id": game.id,
-            "snake": [[list(position) for position in player.snake_body] for _, player in game.players.items()][0],
+            "snakes": {player_id: [list(position) for position in player.snake_body] for player_id, player in game.players.items()},
             "apples": [list(position) for position in game.apples],
         }
 
