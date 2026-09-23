@@ -1,8 +1,12 @@
+import json
+import os
+
 MODI = ("classic", "medium", "pro")
 NAME_MAX = 12
 LEADERBOARD_SIZE = 10
 HINWEIS_LEER = "Noch keine Spiele gespielt"
 HINWEIS_LEER_MODUS = "Noch keine Spiele im Modus {modus}"
+ORDNER = "daten"
 
 highscores: list[dict] = []
 
@@ -53,4 +57,34 @@ def speichere(name: object, score: object, modus: object) -> dict:
 
     eintrag = {"name": name, "score": score, "modus": normalisiere(modus)}
     highscores.append(eintrag)
+    return eintrag
+
+
+def lade(m):
+    p = ORDNER + "/" + m + ".json"
+    if not os.path.exists(p):
+        return []
+    f = open(p, encoding="utf-8")
+    d = json.load(f)
+    f.close()
+    return d
+
+
+def sichere(m):
+    os.makedirs(ORDNER, exist_ok=True)
+    f = open(ORDNER + "/" + m + ".json", "w", encoding="utf-8")
+    json.dump(highscores, f)
+    f.close()
+
+
+def lade_alle():
+    highscores.clear()
+    for m in MODI:
+        for x in lade(m):
+            highscores.append(x)
+
+
+def speichere_dauerhaft(name, score, modus):
+    eintrag = speichere(name, score, modus)
+    sichere(eintrag["modus"])
     return eintrag

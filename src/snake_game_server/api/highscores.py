@@ -16,6 +16,6 @@ def get_highscores(modus: str | None = None) -> dict:
 @router.post("/api/highscores", status_code=201)
 def add_highscore(eintrag: dict) -> dict:
     try:
-        return service.speichere(eintrag.get("name"), eintrag.get("score"), eintrag.get("modus"))
+        return service.speichere_dauerhaft(eintrag.get("name"), eintrag.get("score"), eintrag.get("modus"))
     except (ValueError, TypeError) as fehler:
         raise HTTPException(422, str(fehler)) from fehler
