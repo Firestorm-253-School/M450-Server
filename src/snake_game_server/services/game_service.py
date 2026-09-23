@@ -98,6 +98,8 @@ class GameService:
             case "create_game":
                 map_name = message.get("map", DEFAULT_MAP_NAME)
                 game = await self.create_game(player, map_name)
+
+                self._game_state_message(game)
                 return {"type": "game_created", "game_id": game.id}
 
             case "join_game":
@@ -114,7 +116,8 @@ class GameService:
                         "player_count": None,
                         "map": None
                     }
-                
+
+                self._game_state_message(game)
                 return {
                     "type": "game_joined",
                     "game_id": game.id,
