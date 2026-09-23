@@ -165,7 +165,7 @@ class GameService:
                 game.tick += 1
 
                 game_over = False
-                for player in list(game.players.values()):
+                for player in game.players.values():
                     if await player_service.step(player):
                         game_over = True
 
@@ -191,7 +191,7 @@ class GameService:
         }
 
     async def _broadcast_game_state(self, game: Game) -> None:
-        for player in list(game.players.values()):
+        for player in game.players.values():
             await self.connection_manager.send_to_player(
                 player.id, self._game_state_message(game, player)
             )

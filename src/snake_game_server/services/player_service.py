@@ -48,7 +48,7 @@ class PlayerService:
         
         player.current_game = game
 
-    async def step(self, player: Player) -> bool:
+    def step(self, player: Player) -> bool:
         if player.current_game is None or not player.alive:
             return False
 
