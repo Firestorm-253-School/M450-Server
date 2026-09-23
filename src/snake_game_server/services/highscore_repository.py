@@ -6,18 +6,18 @@ class HighscoreRepository:
     self.directory = directory
 
   def load(self, mode: str):
-    p = self.directory + "/" + mode + ".json"
+    path = self.directory + "/" + mode + ".json"
 
-    if not os.path.exists(p):
+    if not os.path.exists(path):
         return []
     
-    f = open(p, encoding="utf-8")
-    d = json.load(f)
-    f.close()
-    return d
+    file = open(path, encoding="utf-8")
+    data = json.load(file)
+    file.close()
+    return data
 
   def save(self, mode, highscores):
     os.makedirs(self.directory, exist_ok=True)
-    f = open(self.directory + "/" + mode + ".json", "w", encoding="utf-8")
-    json.dump(highscores, f)
-    f.close()
+    file = open(self.directory + "/" + mode + ".json", "w", encoding="utf-8")
+    json.dump(highscores, file)
+    file.close()

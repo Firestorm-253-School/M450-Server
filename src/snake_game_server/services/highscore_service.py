@@ -60,17 +60,17 @@ def speichere(name: object, score: object, modus: object) -> dict:
 
 
 
-def sichere(highscore_repository: HighscoreRepository, mode: str):
+def save_mode(highscore_repository: HighscoreRepository, mode: str):
     highscore_repository.save(mode, highscores)
 
-def lade_alle(highscore_repository: HighscoreRepository):
+def load_all(highscore_repository: HighscoreRepository):
     highscores.clear()
-    for m in MODI:
-        for x in highscore_repository.load(m):
-            highscores.append(x)
+    for mode in MODI:
+        for highscore in highscore_repository.load(mode):
+            highscores.append(highscore)
 
 
-def speichere_dauerhaft(highscore_repository: HighscoreRepository, name, score, modus):
-    eintrag = speichere(name, score, modus)
-    sichere(highscore_repository, eintrag["modus"])
-    return eintrag
+def save_permanently(highscore_repository: HighscoreRepository, name, score, modus):
+    highscore_entry = speichere(name, score, modus)
+    save_mode(highscore_repository, highscore_entry["modus"])
+    return highscore_entry
